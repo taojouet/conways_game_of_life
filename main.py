@@ -8,7 +8,7 @@ color2 = (0, 255, 0)
 colors = [color1, color2]
 
 pygame.init()
-screen = pygame.display.set_mode((1280, 720))
+screen = pygame.display.set_mode((720, 720))
 clock = pygame.time.Clock()
 running = True
 
@@ -20,13 +20,13 @@ while running:
 
     # pygame.time.wait(2000)
 
-    screen.fill("gray")
+    screen.fill("gray") 
 
-    for x in range(0, 1280, 90):
+    for x in range(9, 720, 9):
         pygame.draw.line(screen, "black", [x, 0], [x, 720], width=1)
 
-    for y in range(0, 720, 90):
-        pygame.draw.line(screen, "black", [0, y], [1280, y], width=1)
+    for y in range(9, 720, 9):
+        pygame.draw.line(screen, "black", [0, y], [720, y], width=1)
     
     pygame.display.flip()
     
