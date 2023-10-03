@@ -1,36 +1,39 @@
-import pygame
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
+def update(frameNum, img, grid, N):
+    newGrid = grid.copy()
+    for i in range(N):
+        for j in range(N):
+            # Compute 3x3 sum
+            total = int((grid[i, (j-1)%N] + grid[i, (j+1)%N] +
+                         grid[(i-1)%N, j] + grid[(i+1)%N, j] +
+                         grid[(i-1)%N, (j-1)%N] + grid[(i-1)%N, (j+1)%N] +
+                         grid[(i+1)%N, (j-1)%N] + grid[(i+1)%N, (j+1)%N]) / 255)
+            # Apply Conway's rules
+            if grid[i, j] == ON:  # Cell currently alive
+                if (total < 2) or (total > 3):
+                    newGrid[i, j] = OFF
+            else:  # Cell currently dead
+                if total == 3:
+                    newGrid[i, j] = ON
+    # Update data
+    img.set_data(newGrid)
+    grid[:] = newGrid[:]
+    return img
 
-color1 = (255, 0, 0)
-color2 = (0, 255, 0)
+# Parameters
+ON = 255  # Alive cell
+OFF = 0  # Dead cell
+vals = [ON, OFF]
 
-colors = [color1, color2]
+N = 100
+grid = np.random.choice(vals, N*N, p=[0.2, 0.8]).reshape(N, N)
 
-pygame.init()
-screen = pygame.display.set_mode((720, 720))
-clock = pygame.time.Clock()
-running = True
+fig, ax = plt.subplots()
+img = ax.imshow(grid, interpolation='nearest', cmap='gray')
+ani = animation.FuncAnimation(fig, update, fargs=(img, grid, N),
+                              frames=10, save_count=50)
 
-
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-    # pygame.time.wait(2000)
-
-    screen.fill("gray") 
-
-    for x in range(9, 720, 9):
-        pygame.draw.line(screen, "black", [x, 0], [x, 720], width=1)
-
-    for y in range(9, 720, 9):
-        pygame.draw.line(screen, "black", [0, y], [720, y], width=1)
-    
-    pygame.display.flip()
-    
-    clock.tick(60)  # limits FPS to 60
-
-
-pygame.quit()
+plt.show()
